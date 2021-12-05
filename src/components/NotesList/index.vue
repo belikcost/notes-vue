@@ -1,27 +1,22 @@
 <template>
-  <div class="home">
-    <NotesList :notes="notes" />
-  </div>
+  <NoteItem v-for="note in notes" v-bind="note" :key="note.id" />
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import NotesList from "@/components/NotesList/index.vue";
 import { NoteItemInterface } from "@/types";
+import NoteItem from "@/components/NotesList/Elements/NoteItem/index.vue";
 
 export default defineComponent({
-  name: "Home",
+  name: "NotesList",
   components: {
-    NotesList,
+    NoteItem,
   },
   props: {
     notes: {
       type: Array as PropType<NoteItemInterface[]>,
       required: true,
     },
-  },
-  created() {
-    console.log(this.notes);
   },
 });
 </script>
