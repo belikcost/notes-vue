@@ -20,8 +20,5 @@ export default defineComponent({
       required: true,
     },
   },
-  created() {
-    console.log(this.notes);
-  },
 });
 </script>
