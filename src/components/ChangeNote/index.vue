@@ -35,6 +35,7 @@ import {
   OnChangeNoteInterface,
   NoteItemInterface,
   TaskItemInterface,
+  OnRemoveNoteInterface,
 } from "@/types";
 import TaskItem from "@/components/ChangeNote/Elements/TaskItem/index.vue";
 import TextLabel from "@/primitives/TextLabel/index.vue";
@@ -74,7 +75,6 @@ export default defineComponent({
       },
     };
   },
-  emits: ["removeNote", "exit"],
   props: {
     note: {
       type: Object as PropType<NoteItemInterface>,
@@ -82,6 +82,14 @@ export default defineComponent({
     },
     onChangeNote: {
       type: Function as PropType<OnChangeNoteInterface>,
+      required: true,
+    },
+    onRemoveNote: {
+      type: Function as PropType<OnRemoveNoteInterface>,
+      required: true,
+    },
+    onExit: {
+      type: Function as PropType<() => void>,
       required: true,
     },
   },

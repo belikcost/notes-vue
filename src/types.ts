@@ -16,9 +16,14 @@ interface OnChangeNoteInterface {
   (note: NoteItemInterface): void;
 }
 
+interface OnRemoveNoteInterface {
+  (noteId: NoteItemInterface["id"]): void;
+}
+
 export type {
   TaskItemInterface,
   NoteItemInterface,
   EventType,
   OnChangeNoteInterface,
+  OnRemoveNoteInterface,
 };

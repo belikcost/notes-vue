@@ -2,20 +2,30 @@
   <ChangeNote
     :note="note"
     :onChangeNote="onChangeNote"
-    @exit="onExit"
-    @removeNote="onRemoveNote"
+    :onExit="onExit"
+    :onRemoveNote="onExitAndRemoveNote"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { OnChangeNoteInterface, NoteItemInterface } from "@/types";
+import { defineComponent, PropType } from "vue";
+import { OnChangeNoteInterface, NoteItemInterface, OnRemoveNoteInterface } from "@/types";
 import ChangeNote from "@/components/ChangeNote/index.vue";
 
 export default defineComponent({
   name: "Note",
   components: {
     ChangeNote,
+  },
+  props: {
+    onChangeNote: {
+      type: Function as PropType<OnChangeNoteInterface>,
+      required: true,
+    },
+    onRemoveNote: {
+      type: Function as PropType<OnRemoveNoteInterface>,
+      required: true,
+    },
   },
   computed: {
     note() {
@@ -24,19 +34,13 @@ export default defineComponent({
 
       return notes.find((note: NoteItemInterface) => note.id === +noteId);
     },
-    onChangeNote() {
-      return (note: NoteItemInterface) =>
-        (this.$attrs.changeNote as OnChangeNoteInterface)(note);
-    },
   },
   methods: {
-    onRemoveNote() {
+    onExitAndRemoveNote() {
       this.onExit();
-
-      const removeNote = this.$attrs.removeNote as (noteId: number) => void;
       const noteId = this.note?.id as number;
 
-      removeNote(noteId);
+      this.onRemoveNote(noteId);
     },
     onExit() {
       this.$router.push("/");

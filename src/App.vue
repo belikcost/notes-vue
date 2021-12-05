@@ -1,8 +1,8 @@
 <template>
   <router-view
     :notes="notes"
-    :changeNote="changeNote"
-    :removeNote="removeNote"
+    :onChangeNote="changeNote"
+    :onRemoveNote="removeNote"
   />
 </template>
 
