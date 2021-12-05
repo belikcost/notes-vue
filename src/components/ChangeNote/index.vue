@@ -43,6 +43,7 @@ import Button from "@/primitives/Button/index.vue";
 import ConfirmModal from "@/components/ChangeNote/Elements/ConfirmModal/index.vue";
 import { ChangeNoteStateInterface } from "@/components/ChangeNote/types";
 import HelpTools from "@/components/ChangeNote/Elements/HelpTools/index.vue";
+import "./index.css";
 
 const INITIAL_MODAL = {
   show: false,
@@ -147,30 +148,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.change-note_title {
-  text-align: center;
-}
-
-.change-note_margin-0 {
-  margin: 0;
-}
-
-.change-note__tasks {
-  margin-top: 50px;
-}
-
-.change-note__footer {
-  margin: 50px auto 0;
-}
-
-.change-note__button-group {
-  display: flex;
-  justify-content: space-around;
-}
-
-.change-note__help-tools {
-  margin: 10px 0;
-}
-</style>

@@ -45,6 +45,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { NoteItemInterface } from "@/types";
+import "./index.css";
 
 const TASKS_DEFAULT_LENGTH = 3;
 
@@ -76,28 +77,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.task-item {
-  display: flex;
-  align-items: center;
-}
-
-.task-item_checkbox {
-  margin-left: 10px;
-}
-
-.note-item__header {
-  display: flex;
-  align-items: center;
-}
-
-.note-item_icon {
-  width: 20px;
-  height: 20px;
-
-  fill: #2c3e50;
-
-  margin-left: 8px;
-}
-</style>
