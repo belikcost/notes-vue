@@ -51,12 +51,21 @@ const INITIAL_NOTE = {
   tasks: [],
 };
 
+interface AppStateInterface {
+  notes: NoteItemInterface[];
+}
+
 export default defineComponent({
   name: "App",
-  data() {
+  data(): AppStateInterface {
     return {
-      notes: INITIAL_NOTES,
+      notes: this.getInitialNotes(),
     };
+  },
+  watch: {
+    notes() {
+      localStorage.setItem("notes", JSON.stringify(this.notes));
+    },
   },
   methods: {
     removeNote(noteId: NoteItemInterface["id"]) {
@@ -73,6 +82,16 @@ export default defineComponent({
       this.$data.notes = [...this.$data.notes, { id, ...INITIAL_NOTE }];
       this.$router.push(`/${id}`);
     },
+    getInitialNotes(): NoteItemInterface[] {
+      const notesFromStorage = localStorage.getItem("notes");
+      let initialNotes = INITIAL_NOTES;
+
+      if (notesFromStorage) {
+        initialNotes = JSON.parse(notesFromStorage);
+      }
+
+      return initialNotes;
+    },
   },
 });
 </script>
@@ -83,18 +102,5 @@ export default defineComponent({
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
 }
 </style>
