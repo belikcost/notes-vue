@@ -9,8 +9,13 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { OnChangeNoteInterface, NoteItemInterface, OnRemoveNoteInterface } from "@/types";
+import {
+  OnChangeNoteInterface,
+  NoteItemInterface,
+  OnRemoveNoteInterface,
+} from "@/types";
 import ChangeNote from "@/components/ChangeNote/index.vue";
+import { validateNoteTitle, validateTask } from "@/utils";
 
 export default defineComponent({
   name: "Note",
@@ -43,7 +48,28 @@ export default defineComponent({
       this.onRemoveNote(noteId);
     },
     onExit() {
+      const note = this.note as NoteItemInterface;
+
+      if (!this.validateNote(note)) {
+        this.onRemoveNote(note.id);
+      }
+
       this.$router.push("/");
+    },
+    validateNote(note: NoteItemInterface) {
+      let valid = true;
+
+      if (!validateNoteTitle(note.title)) {
+        valid = false;
+      }
+
+      note.tasks.forEach((task) => {
+        if (!validateTask(task)) {
+          valid = false;
+        }
+      });
+
+      return valid;
     },
   },
 });

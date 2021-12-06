@@ -56,6 +56,7 @@ import {
 } from "@/components/ChangeNote/types";
 import HelpTools from "@/components/ChangeNote/Elements/HelpTools/index.vue";
 import "./index.css";
+import { validateNoteTitle, validateTask } from "@/utils";
 
 const INITIAL_MODAL = {
   show: false,
@@ -188,19 +189,19 @@ export default defineComponent({
     validateChanges(note: NoteItemInterface) {
       let valid = true;
 
-      if (note.title.length === 0) {
+      if (validateNoteTitle(note.title)) {
+        this.$data.titleError = false;
+      } else {
         this.$data.titleError = true;
         valid = false;
-      } else {
-        this.$data.titleError = false;
       }
 
       note.tasks.forEach((task) => {
-        if (task.name.length === 0) {
+        if (validateTask(task)) {
+          this.$data.errorsByTaskId[task.id] = false;
+        } else {
           this.$data.errorsByTaskId[task.id] = true;
           valid = false;
-        } else {
-          this.$data.errorsByTaskId[task.id] = false;
         }
       });
 

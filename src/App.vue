@@ -3,6 +3,7 @@
     :notes="notes"
     :onChangeNote="changeNote"
     :onRemoveNote="removeNote"
+    :onCreateNote="createNote"
   />
 </template>
 
@@ -45,6 +46,11 @@ const INITIAL_NOTES: NoteItemInterface[] = [
   },
 ];
 
+const INITIAL_NOTE = {
+  title: "",
+  tasks: [],
+};
+
 export default defineComponent({
   name: "App",
   data() {
@@ -60,6 +66,12 @@ export default defineComponent({
       this.$data.notes = this.$data.notes.map((note) =>
         note.id === changedNote.id ? changedNote : note
       );
+    },
+    createNote() {
+      const id = Math.floor(Math.random() * 100);
+
+      this.$data.notes = [...this.$data.notes, { id, ...INITIAL_NOTE }];
+      this.$router.push(`/${id}`);
     },
   },
 });

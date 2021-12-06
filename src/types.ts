@@ -10,7 +10,10 @@ interface NoteItemInterface {
   tasks: TaskItemInterface[];
 }
 
-type EventType = Event & { target: { value: string; checked: boolean } };
+type EventType = Event & {
+  key: string;
+  target: { value: string; checked: boolean };
+};
 
 interface OnChangeNoteInterface {
   (note: NoteItemInterface): void;
@@ -20,10 +23,15 @@ interface OnRemoveNoteInterface {
   (noteId: NoteItemInterface["id"]): void;
 }
 
+interface OnCreateNoteInterface {
+  (): void;
+}
+
 export type {
   TaskItemInterface,
   NoteItemInterface,
   EventType,
   OnChangeNoteInterface,
   OnRemoveNoteInterface,
+  OnCreateNoteInterface,
 };
