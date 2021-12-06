@@ -10,10 +10,12 @@
     <div class="change-note__tasks">
       <h3 class="change-note_margin-0">Tasks</h3>
       <template v-for="task in changedNote.tasks" :key="task.id">
-        <TaskItem :task="task" @changeTask="onChangeTask" />
-        <div class="change-note_error" v-if="errorsByTaskId[task.id]">
-          Check the correctness of the entered data
-        </div>
+        <TaskItem
+          :task="task"
+          :error="errorsByTaskId[task.id]"
+          :onChangeTask="onChangeTask"
+          :onRemoveTask="() => onRemoveTask(task.id)"
+        />
       </template>
       <Button @click="onCreateTask">Create task</Button>
     </div>
@@ -171,6 +173,8 @@ export default defineComponent({
         ...this.$data.changedNote.tasks,
         { id, ...INITIAL_TASK },
       ];
+
+      this.$data.errorsByTaskId[id] = false;
     },
     getErrorsByTaskId(tasks: TaskItemInterface[]) {
       const result: ErrorsByTaskIdType = {};
@@ -201,6 +205,11 @@ export default defineComponent({
       });
 
       return valid;
+    },
+    onRemoveTask(taskId: TaskItemInterface["id"]) {
+      this.$data.changedNote.tasks = this.$data.changedNote.tasks.filter(
+        (task) => task.id !== taskId
+      );
     },
   },
 });
