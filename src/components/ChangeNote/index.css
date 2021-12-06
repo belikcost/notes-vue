@@ -22,3 +22,11 @@
 .change-note__help-tools {
     margin: 10px 0;
 }
+
+.change-note_error {
+    color: crimson;
+
+    font-size: 14px;
+
+    margin: 15px 0;
+}

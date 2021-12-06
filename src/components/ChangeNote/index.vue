@@ -4,11 +4,18 @@
     <TextLabel text="Note title">
       <input type="text" v-model="changedNote.title" />
     </TextLabel>
+    <div class="change-note_error" v-if="titleError">
+      Check the correctness of the entered title
+    </div>
     <div class="change-note__tasks">
       <h3 class="change-note_margin-0">Tasks</h3>
       <template v-for="task in changedNote.tasks" :key="task.id">
         <TaskItem :task="task" @changeTask="onChangeTask" />
+        <div class="change-note_error" v-if="errorsByTaskId[task.id]">
+          Check the correctness of the entered data
+        </div>
       </template>
+      <Button @click="onCreateTask">Create task</Button>
     </div>
     <footer class="change-note__footer">
       <div class="change-note__help-tools">
@@ -41,7 +48,10 @@ import TaskItem from "@/components/ChangeNote/Elements/TaskItem/index.vue";
 import TextLabel from "@/primitives/TextLabel/index.vue";
 import Button from "@/primitives/Button/index.vue";
 import ConfirmModal from "@/components/ChangeNote/Elements/ConfirmModal/index.vue";
-import { ChangeNoteStateInterface } from "@/components/ChangeNote/types";
+import {
+  ChangeNoteStateInterface,
+  ErrorsByTaskIdType,
+} from "@/components/ChangeNote/types";
 import HelpTools from "@/components/ChangeNote/Elements/HelpTools/index.vue";
 import "./index.css";
 
@@ -49,6 +59,11 @@ const INITIAL_MODAL = {
   show: false,
   message: null,
   emitName: null,
+};
+
+const INITIAL_TASK = {
+  name: "",
+  completed: false,
 };
 
 export default defineComponent({
@@ -74,6 +89,8 @@ export default defineComponent({
         active: false,
         onUse: () => this.onReturnChanges(),
       },
+      errorsByTaskId: this.getErrorsByTaskId(this.note.tasks),
+      titleError: false,
     };
   },
   props: {
@@ -115,7 +132,9 @@ export default defineComponent({
         this.changedNote.title !== this.initialNote.title ||
         this.changedNote.tasks !== this.initialNote.tasks;
 
-      if (checkChanges) {
+      const checkChangesValid = this.validateChanges(this.changedNote);
+
+      if (checkChanges && checkChangesValid) {
         this.onChangeNote(this.changedNote);
         this.$data.unDoChanges.active = true;
       }
@@ -144,6 +163,44 @@ export default defineComponent({
         message: "Do you really want to exit?",
         emitName: "exit",
       };
+    },
+    onCreateTask() {
+      const id = Math.floor(Math.random() * 100);
+
+      this.$data.changedNote.tasks = [
+        ...this.$data.changedNote.tasks,
+        { id, ...INITIAL_TASK },
+      ];
+    },
+    getErrorsByTaskId(tasks: TaskItemInterface[]) {
+      const result: ErrorsByTaskIdType = {};
+
+      tasks.forEach((task) => {
+        result[task.id] = false;
+      });
+
+      return result;
+    },
+    validateChanges(note: NoteItemInterface) {
+      let valid = true;
+
+      if (note.title.length === 0) {
+        this.$data.titleError = true;
+        valid = false;
+      } else {
+        this.$data.titleError = false;
+      }
+
+      note.tasks.forEach((task) => {
+        if (task.name.length === 0) {
+          this.$data.errorsByTaskId[task.id] = true;
+          valid = false;
+        } else {
+          this.$data.errorsByTaskId[task.id] = false;
+        }
+      });
+
+      return valid;
     },
   },
 });
