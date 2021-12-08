@@ -3,7 +3,7 @@
     <p>{{ message }}</p>
     <div class="confirm-modal__footer">
       <Button @click="resetModal">Cancel</Button>
-      <Button @click="confirmEvent">Ok</Button>
+      <Button @click="confirmCallback">Ok</Button>
     </div>
   </Modal>
 </template>
@@ -24,7 +24,7 @@ export default defineComponent({
       type: String as PropType<string>,
       required: true,
     },
-    confirmEvent: {
+    confirmCallback: {
       type: Function as PropType<() => void>,
       required: true,
     },

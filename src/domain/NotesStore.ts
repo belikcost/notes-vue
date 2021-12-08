@@ -20,9 +20,9 @@ const INITIAL_NOTE = {
 export default class NotesStore implements NotesStoreInterface {
   _notes: NoteItemInterface[];
 
-  constructor(initialNotes: NoteItemInterface[]) {
+  constructor(initialNotes: NoteItemInterface[], storage: Storage) {
     try {
-      const notesFromStorage = localStorage.getItem("notes");
+      const notesFromStorage = storage.getItem("notes");
 
       if (notesFromStorage) {
         this._notes = JSON.parse(notesFromStorage);

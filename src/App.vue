@@ -11,12 +11,14 @@
 import { computed, defineComponent, reactive, watch } from "vue";
 import { NoteItemInterface } from "@/types";
 import { INITIAL_NOTES } from "@/components/NotesList/constants";
-import NotesStore from "@/entites/NotesStore";
+import NotesStore from "@/domain/NotesStore";
 
 export default defineComponent({
   name: "App",
   setup() {
-    const AppNotesStoreInstance = reactive(new NotesStore(INITIAL_NOTES));
+    const AppNotesStoreInstance = reactive(
+      new NotesStore(INITIAL_NOTES, localStorage)
+    );
 
     const notes = computed(() => {
       return AppNotesStoreInstance.getNotes();

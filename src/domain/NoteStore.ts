@@ -1,6 +1,6 @@
 import { NoteItemInterface, TaskItemInterface } from "@/types";
 
-interface NoteStorageInterface {
+interface NoteStoreInterface {
   _note: NoteItemInterface;
   getNote: () => NoteItemInterface;
   createTask: (taskId: TaskItemInterface["id"]) => void;
@@ -13,7 +13,7 @@ const INITIAL_TASK = {
   completed: false,
 };
 
-export default class NoteStorage implements NoteStorageInterface {
+export default class NoteStore implements NoteStoreInterface {
   _note: NoteItemInterface;
 
   constructor(changedNote: NoteItemInterface) {

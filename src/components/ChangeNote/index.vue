@@ -23,18 +23,12 @@
       <div class="change-note__help-tools">
         <HelpTools :unDoChanges="unDoChanges" :returnChanges="returnChanges" />
       </div>
-      <div class="change-note__button-group">
-        <Button @click="openExitModal">Exit</Button>
-        <Button @click="onSaveChanges">Save</Button>
-        <Button @click="openRemoveNoteModal">Remove</Button>
-      </div>
+      <ManageChangedNote
+        :onRemoveNote="onRemoveNote"
+        :onExit="onExit"
+        :onSaveChanges="onSaveChanges"
+      />
     </footer>
-    <ConfirmModal
-      v-if="modal.show"
-      :message="modal.message"
-      :confirmEvent="() => $emit(modal.emitName)"
-      :resetModal="onResetModal"
-    />
   </div>
 </template>
 
@@ -51,12 +45,10 @@ import {
   ChangeNoteInterface,
   NoteItemInterface,
   TaskItemInterface,
-  RemoveNoteInterface,
 } from "@/types";
 import TaskItem from "@/components/ChangeNote/Elements/TaskItem/index.vue";
 import TextLabel from "@/primitives/TextLabel/index.vue";
 import Button from "@/primitives/Button/index.vue";
-import ConfirmModal from "@/components/ChangeNote/Elements/ConfirmModal/index.vue";
 import {
   ChangeNoteStateInterface,
   ErrorsByTaskIdType,
@@ -64,14 +56,10 @@ import {
 import HelpTools from "@/components/ChangeNote/Elements/HelpTools/index.vue";
 import "./index.css";
 import { validateNoteTitle, validateTask } from "@/utils";
-import NoteStorage from "@/entites/NoteStorage";
-import { getErrorsByTaskId } from "./utils";
 
-const INITIAL_MODAL = {
-  show: false,
-  message: null,
-  emitName: null,
-};
+import { getErrorsByTaskId } from "./utils";
+import NoteStore from "@/domain/NoteStore";
+import ManageChangedNote from "@/components/ChangeNote/Elements/ManageChangedNote/index.vue";
 
 export default defineComponent({
   name: "ChangeNote",
@@ -79,14 +67,13 @@ export default defineComponent({
     TaskItem,
     TextLabel,
     Button,
-    ConfirmModal,
     HelpTools,
+    ManageChangedNote,
   },
   data(): ChangeNoteStateInterface {
     return {
       initialNote: this.note,
       backupChangedNote: null,
-      modal: INITIAL_MODAL,
       unDoChanges: {
         active: false,
         onUse: () => this.onUndoChanges(),
@@ -107,7 +94,7 @@ export default defineComponent({
       required: true,
     },
     onRemoveNote: {
-      type: Function as PropType<RemoveNoteInterface>,
+      type: Function as PropType<() => void>,
       required: true,
     },
     onExit: {
@@ -127,23 +114,6 @@ export default defineComponent({
     },
     onRemoveTask(taskId: TaskItemInterface["id"]) {
       this.NoteStorage.removeTask(taskId);
-    },
-    openRemoveNoteModal() {
-      this.$data.modal = {
-        show: true,
-        message: "Do you really want to remove this note?",
-        emitName: "removeNote",
-      };
-    },
-    openExitModal() {
-      this.$data.modal = {
-        show: true,
-        message: "Do you really want to exit?",
-        emitName: "exit",
-      };
-    },
-    onResetModal() {
-      this.$data.modal = INITIAL_MODAL;
     },
     onSaveChanges() {
       const checkChanges =
@@ -205,17 +175,17 @@ export default defineComponent({
 
     const { note } = toRefs(props);
     const reactiveInstance = reactive({
-      noteStorage: new NoteStorage({ ...note.value }),
+      noteStore: new NoteStore({ ...note.value }),
     });
 
     const changedNote = computed({
-      get: () => reactiveInstance.noteStorage.getNote(),
+      get: () => reactiveInstance.noteStore.getNote(),
       set: (value) =>
-        (reactiveInstance.noteStorage = new NoteStorage({ ...value })),
+        (reactiveInstance.noteStore = new NoteStore({ ...value })),
     });
 
     return {
-      NoteStorage: reactiveInstance.noteStorage,
+      NoteStorage: reactiveInstance.noteStore,
       changedNote,
       titleError,
       errorsByTaskId,
