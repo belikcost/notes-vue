@@ -39,7 +39,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import {
+  computed,
+  defineComponent,
+  PropType,
+  reactive,
+  ref,
+  toRefs,
+} from "vue";
 import {
   ChangeNoteInterface,
   NoteItemInterface,
@@ -57,16 +64,13 @@ import {
 import HelpTools from "@/components/ChangeNote/Elements/HelpTools/index.vue";
 import "./index.css";
 import { validateNoteTitle, validateTask } from "@/utils";
+import NoteStorage from "@/entites/NoteStorage";
+import { getErrorsByTaskId } from "./utils";
 
 const INITIAL_MODAL = {
   show: false,
   message: null,
   emitName: null,
-};
-
-const INITIAL_TASK = {
-  name: "",
-  completed: false,
 };
 
 export default defineComponent({
@@ -80,7 +84,6 @@ export default defineComponent({
   },
   data(): ChangeNoteStateInterface {
     return {
-      changedNote: { ...this.note },
       initialNote: this.note,
       backupChangedNote: null,
       modal: INITIAL_MODAL,
@@ -92,8 +95,6 @@ export default defineComponent({
         active: false,
         onUse: () => this.onReturnChanges(),
       },
-      errorsByTaskId: this.getErrorsByTaskId(this.note.tasks),
-      titleError: false,
     };
   },
   props: {
@@ -115,16 +116,30 @@ export default defineComponent({
     },
   },
   methods: {
-    onChangeTask(newTask: TaskItemInterface) {
-      this.$data.changedNote.tasks = this.$data.changedNote.tasks.map((task) =>
-        task.id === newTask.id ? newTask : task
-      );
+    onCreateTask() {
+      const id = Math.floor(Math.random() * 100);
+
+      this.NoteStorage.createTask(id);
+      this.errorsByTaskId[id] = false;
+    },
+    onChangeTask(changedTask: TaskItemInterface) {
+      this.NoteStorage.changeTask(changedTask);
+    },
+    onRemoveTask(taskId: TaskItemInterface["id"]) {
+      this.NoteStorage.removeTask(taskId);
     },
     openRemoveNoteModal() {
       this.$data.modal = {
         show: true,
         message: "Do you really want to remove this note?",
         emitName: "removeNote",
+      };
+    },
+    openExitModal() {
+      this.$data.modal = {
+        show: true,
+        message: "Do you really want to exit?",
+        emitName: "exit",
       };
     },
     onResetModal() {
@@ -146,72 +161,65 @@ export default defineComponent({
       this.onChangeNote(this.initialNote);
 
       this.$data.backupChangedNote = this.changedNote;
-      this.$data.changedNote = this.initialNote;
+      this.changedNote = this.initialNote;
 
       this.$data.unDoChanges.active = false;
       this.$data.returnChanges.active = true;
     },
     onReturnChanges() {
       if (this.backupChangedNote) {
-        this.$data.changedNote = this.backupChangedNote;
+        this.changedNote = this.backupChangedNote;
         this.$data.backupChangedNote = null;
 
         this.onSaveChanges();
         this.$data.returnChanges.active = false;
       }
     },
-    openExitModal() {
-      this.$data.modal = {
-        show: true,
-        message: "Do you really want to exit?",
-        emitName: "exit",
-      };
-    },
-    onCreateTask() {
-      const id = Math.floor(Math.random() * 100);
-
-      this.$data.changedNote.tasks = [
-        ...this.$data.changedNote.tasks,
-        { id, ...INITIAL_TASK },
-      ];
-
-      this.$data.errorsByTaskId[id] = false;
-    },
-    getErrorsByTaskId(tasks: TaskItemInterface[]) {
-      const result: ErrorsByTaskIdType = {};
-
-      tasks.forEach((task) => {
-        result[task.id] = false;
-      });
-
-      return result;
-    },
     validateChanges(note: NoteItemInterface) {
       let valid = true;
 
       if (validateNoteTitle(note.title)) {
-        this.$data.titleError = false;
+        this.titleError = false;
       } else {
-        this.$data.titleError = true;
+        this.titleError = true;
         valid = false;
       }
 
       note.tasks.forEach((task) => {
         if (validateTask(task)) {
-          this.$data.errorsByTaskId[task.id] = false;
+          this.errorsByTaskId[task.id] = false;
         } else {
-          this.$data.errorsByTaskId[task.id] = true;
+          this.errorsByTaskId[task.id] = true;
           valid = false;
         }
       });
 
       return valid;
     },
-    onRemoveTask(taskId: TaskItemInterface["id"]) {
-      this.$data.changedNote.tasks = this.$data.changedNote.tasks.filter(
-        (task) => task.id !== taskId
-      );
-    },
+  },
+  setup(props) {
+    const errorsByTaskId: ErrorsByTaskIdType = reactive(
+      getErrorsByTaskId(props.note.tasks)
+    );
+    const titleError = ref(false);
+
+    const { note } = toRefs(props);
+    const reactiveInstance = reactive({
+      noteStorage: new NoteStorage({ ...note.value }),
+    });
+
+    const changedNote = computed({
+      get: () => reactiveInstance.noteStorage.getNote(),
+      set: (value) =>
+        (reactiveInstance.noteStorage = new NoteStorage({ ...value })),
+    });
+
+    return {
+      NoteStorage: reactiveInstance.noteStorage,
+      changedNote,
+      titleError,
+      errorsByTaskId,
+    };
   },
 });
 </script>

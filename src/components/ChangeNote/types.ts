@@ -9,14 +9,11 @@ interface ModalInterface {
 type ErrorsByTaskIdType = Record<TaskItemInterface["id"], boolean>;
 
 interface ChangeNoteStateInterface {
-  changedNote: NoteItemInterface;
   initialNote: Readonly<NoteItemInterface>;
   backupChangedNote: null | NoteItemInterface;
   modal: ModalInterface;
   unDoChanges: HelpToolInterface;
   returnChanges: HelpToolInterface;
-  errorsByTaskId: ErrorsByTaskIdType;
-  titleError: boolean;
 }
 
 interface HelpToolInterface {
