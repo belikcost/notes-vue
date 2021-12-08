@@ -10,8 +10,8 @@ import { defineComponent, PropType } from "vue";
 import NotesList from "@/components/NotesList/index.vue";
 import {
   NoteItemInterface,
-  OnCreateNoteInterface,
-  OnRemoveNoteInterface,
+  CreateNoteInterface,
+  RemoveNoteInterface,
 } from "@/types";
 import Button from "@/primitives/Button/index.vue";
 
@@ -27,11 +27,11 @@ export default defineComponent({
       required: true,
     },
     onRemoveNote: {
-      type: Function as PropType<OnRemoveNoteInterface>,
+      type: Function as PropType<RemoveNoteInterface>,
       required: true,
     },
     onCreateNote: {
-      type: Function as PropType<OnCreateNoteInterface>,
+      type: Function as PropType<CreateNoteInterface>,
       required: true,
     },
   },

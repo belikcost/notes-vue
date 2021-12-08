@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { OnRemoveNoteInterface } from "@/types";
+import { RemoveNoteInterface } from "@/types";
 import Modal from "@/primitives/Modal/index.vue";
 import Button from "@/primitives/Button/index.vue";
 
@@ -22,7 +22,7 @@ export default defineComponent({
   },
   props: {
     onRemoveNote: {
-      type: Function as PropType<OnRemoveNoteInterface>,
+      type: Function as PropType<RemoveNoteInterface>,
       required: true,
     },
     noteId: {

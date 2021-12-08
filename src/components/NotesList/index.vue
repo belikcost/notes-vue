@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { NoteItemInterface, OnRemoveNoteInterface } from "@/types";
+import { NoteItemInterface, RemoveNoteInterface } from "@/types";
 import NoteItem from "@/components/NotesList/Elements/NoteItem/index.vue";
 
 export default defineComponent({
@@ -19,7 +19,7 @@ export default defineComponent({
       required: true,
     },
     onRemoveNote: {
-      type: Function as PropType<OnRemoveNoteInterface>,
+      type: Function as PropType<RemoveNoteInterface>,
       required: true,
     },
   },

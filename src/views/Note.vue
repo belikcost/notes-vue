@@ -10,9 +10,9 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import {
-  OnChangeNoteInterface,
+  ChangeNoteInterface,
   NoteItemInterface,
-  OnRemoveNoteInterface,
+  RemoveNoteInterface,
 } from "@/types";
 import ChangeNote from "@/components/ChangeNote/index.vue";
 import { validateNoteTitle, validateTask } from "@/utils";
@@ -24,11 +24,11 @@ export default defineComponent({
   },
   props: {
     onChangeNote: {
-      type: Function as PropType<OnChangeNoteInterface>,
+      type: Function as PropType<ChangeNoteInterface>,
       required: true,
     },
     onRemoveNote: {
-      type: Function as PropType<OnRemoveNoteInterface>,
+      type: Function as PropType<RemoveNoteInterface>,
       required: true,
     },
   },

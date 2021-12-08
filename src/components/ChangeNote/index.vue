@@ -41,10 +41,10 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import {
-  OnChangeNoteInterface,
+  ChangeNoteInterface,
   NoteItemInterface,
   TaskItemInterface,
-  OnRemoveNoteInterface,
+  RemoveNoteInterface,
 } from "@/types";
 import TaskItem from "@/components/ChangeNote/Elements/TaskItem/index.vue";
 import TextLabel from "@/primitives/TextLabel/index.vue";
@@ -102,11 +102,11 @@ export default defineComponent({
       required: true,
     },
     onChangeNote: {
-      type: Function as PropType<OnChangeNoteInterface>,
+      type: Function as PropType<ChangeNoteInterface>,
       required: true,
     },
     onRemoveNote: {
-      type: Function as PropType<OnRemoveNoteInterface>,
+      type: Function as PropType<RemoveNoteInterface>,
       required: true,
     },
     onExit: {
