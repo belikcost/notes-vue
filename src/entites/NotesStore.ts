@@ -6,7 +6,7 @@ import {
 
 interface NotesStoreInterface {
   _notes: NoteItemInterface[];
-  createNoteAndGetId: () => NoteItemInterface["id"];
+  createNote: (noteId: NoteItemInterface["id"]) => void;
   changeNote: ChangeNoteInterface;
   removeNote: RemoveNoteInterface;
   getNotes: () => NoteItemInterface[];
@@ -38,12 +38,8 @@ export default class NotesStore implements NotesStoreInterface {
     return this._notes;
   }
 
-  createNoteAndGetId(): NoteItemInterface["id"] {
-    const id = Math.floor(Math.random() * 100);
-
-    this._notes.push({ id, ...INITIAL_NOTE });
-
-    return id;
+  createNote(noteId: NoteItemInterface["id"]): void {
+    this._notes.push({ id: noteId, ...INITIAL_NOTE });
   }
 
   changeNote(changedNote: NoteItemInterface): void {
@@ -53,7 +49,6 @@ export default class NotesStore implements NotesStoreInterface {
   }
 
   removeNote(noteId: NoteItemInterface["id"]): void {
-    console.log(noteId);
     this._notes = this._notes.filter((note) => note.id !== noteId);
   }
 }

@@ -3,20 +3,20 @@
     :notes="notes"
     :onChangeNote="onChangeNote"
     :onRemoveNote="onRemoveNote"
-    :onCreateNote="createNoteWithRouter"
+    :onCreateNote="onCreateNote"
   />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, reactive, watch } from "vue";
 import { NoteItemInterface } from "@/types";
-import AppNotesStore from "@/entites/AppNotesStore";
 import { INITIAL_NOTES } from "@/components/NotesList/constants";
+import NotesStore from "@/entites/NotesStore";
 
 export default defineComponent({
   name: "App",
   setup() {
-    const AppNotesStoreInstance = reactive(new AppNotesStore(INITIAL_NOTES));
+    const AppNotesStoreInstance = reactive(new NotesStore(INITIAL_NOTES));
 
     const notes = computed(() => {
       return AppNotesStoreInstance.getNotes();
@@ -30,8 +30,11 @@ export default defineComponent({
     return { NotesStore: AppNotesStoreInstance, notes };
   },
   methods: {
-    createNoteWithRouter() {
-      this.NotesStore.createNoteAndRedirect(this.$router);
+    onCreateNote() {
+      const id = Math.floor(Math.random() * 100);
+
+      this.NotesStore.createNote(id);
+      this.$router.push(`/${id}`);
     },
     onRemoveNote(noteId: NoteItemInterface["id"]) {
       this.NotesStore.removeNote(noteId);
