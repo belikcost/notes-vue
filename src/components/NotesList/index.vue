@@ -1,6 +1,6 @@
 <template>
   <NoteItem v-for="note in notes" v-bind="note" :key="note.id" />
-  <router-view :onRemoveNote="onRemoveNote" />
+  <router-view :onCheckNote="checkNote" :onRemoveNote="onRemoveNote" />
 </template>
 
 <script lang="ts">
@@ -21,6 +21,11 @@ export default defineComponent({
     onRemoveNote: {
       type: Function as PropType<RemoveNoteInterface>,
       required: true,
+    },
+  },
+  methods: {
+    checkNote(noteId: NoteItemInterface["id"]) {
+      return this.notes.some((note) => note.id === noteId);
     },
   },
 });

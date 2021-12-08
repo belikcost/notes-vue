@@ -1,5 +1,6 @@
 <template>
   <ChangeNote
+    v-if="note"
     :note="note"
     :onChangeNote="onChangeNote"
     :onExit="onExit"
@@ -39,6 +40,11 @@ export default defineComponent({
 
       return notes.find((note: NoteItemInterface) => note.id === +noteId);
     },
+  },
+  created() {
+    if (!this.note) {
+      this.$router.push("/");
+    }
   },
   methods: {
     onExitAndRemoveNote() {

@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { RemoveNoteInterface } from "@/types";
+import { NoteItemInterface, RemoveNoteInterface } from "@/types";
 import Modal from "@/primitives/Modal/index.vue";
 import Button from "@/primitives/Button/index.vue";
 
@@ -29,6 +29,10 @@ export default defineComponent({
       type: String as PropType<string>,
       required: true,
     },
+    onCheckNote: {
+      type: Function as PropType<(noteId: NoteItemInterface["id"]) => boolean>,
+      required: true,
+    },
   },
   methods: {
     hideModal() {
@@ -38,6 +42,13 @@ export default defineComponent({
       this.onRemoveNote(+this.noteId);
       this.hideModal();
     },
+  },
+  created() {
+    const checkNoteResult = this.onCheckNote(+this.noteId);
+
+    if (!checkNoteResult) {
+      this.$router.push("/");
+    }
   },
 });
 </script>
