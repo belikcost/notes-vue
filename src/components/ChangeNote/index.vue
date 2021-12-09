@@ -4,7 +4,7 @@
     <TextLabel text="Note title">
       <input type="text" v-model="changedNote.title" />
     </TextLabel>
-    <div class="change-note_error" v-if="titleError">
+    <div class="change-note_error" v-if="errors.title">
       Check the correctness of the entered title
     </div>
     <div class="change-note__tasks">
@@ -12,7 +12,7 @@
       <template v-for="task in changedNote.tasks" :key="task.id">
         <TaskItem
           :task="task"
-          :error="errorsByTaskId[task.id]"
+          :error="errors.tasks[task.id] || false"
           :onChangeTask="onChangeTask"
           :onRemoveTask="() => onRemoveTask(task.id)"
         />
@@ -33,14 +33,7 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  PropType,
-  reactive,
-  ref,
-  toRefs,
-} from "vue";
+import { computed, defineComponent, PropType, reactive, toRefs } from "vue";
 import {
   ChangeNoteInterface,
   NoteItemInterface,
@@ -49,17 +42,12 @@ import {
 import TaskItem from "@/components/ChangeNote/Elements/TaskItem/index.vue";
 import TextLabel from "@/primitives/TextLabel/index.vue";
 import Button from "@/primitives/Button/index.vue";
-import {
-  ChangeNoteStateInterface,
-  ErrorsByTaskIdType,
-} from "@/components/ChangeNote/types";
+import { ChangeNoteStateInterface } from "@/components/ChangeNote/types";
 import HelpTools from "@/components/ChangeNote/Elements/HelpTools/index.vue";
 import "./index.css";
-import { validateNoteTitle, validateTask } from "@/utils";
-
-import { getErrorsByTaskId } from "./utils";
 import NoteStore from "@/domain/NoteStore";
 import ManageChangedNote from "@/components/ChangeNote/Elements/ManageChangedNote/index.vue";
+import NoteValidator from "@/domain/NoteValidator";
 
 export default defineComponent({
   name: "ChangeNote",
@@ -81,6 +69,10 @@ export default defineComponent({
       returnChanges: {
         active: false,
         onUse: () => this.onReturnChanges(),
+      },
+      errors: {
+        title: false,
+        tasks: {},
       },
     };
   },
@@ -106,23 +98,23 @@ export default defineComponent({
     onCreateTask() {
       const id = Math.floor(Math.random() * 100);
 
-      this.NoteStorage.createTask(id);
-      this.errorsByTaskId[id] = false;
+      this.noteStore.createTask(id);
     },
     onChangeTask(changedTask: TaskItemInterface) {
-      this.NoteStorage.changeTask(changedTask);
+      this.noteStore.changeTask(changedTask);
     },
     onRemoveTask(taskId: TaskItemInterface["id"]) {
-      this.NoteStorage.removeTask(taskId);
+      this.noteStore.removeTask(taskId);
     },
     onSaveChanges() {
       const checkChanges =
         this.changedNote.title !== this.initialNote.title ||
         this.changedNote.tasks !== this.initialNote.tasks;
 
-      const checkChangesValid = this.validateChanges(this.changedNote);
+      const noteValidator = new NoteValidator(this.changedNote);
+      this.$data.errors = noteValidator.getErrors();
 
-      if (checkChanges && checkChangesValid) {
+      if (checkChanges && noteValidator.getValid()) {
         this.onChangeNote(this.changedNote);
         this.$data.unDoChanges.active = true;
       }
@@ -145,35 +137,10 @@ export default defineComponent({
         this.$data.returnChanges.active = false;
       }
     },
-    validateChanges(note: NoteItemInterface) {
-      let valid = true;
-
-      if (validateNoteTitle(note.title)) {
-        this.titleError = false;
-      } else {
-        this.titleError = true;
-        valid = false;
-      }
-
-      note.tasks.forEach((task) => {
-        if (validateTask(task)) {
-          this.errorsByTaskId[task.id] = false;
-        } else {
-          this.errorsByTaskId[task.id] = true;
-          valid = false;
-        }
-      });
-
-      return valid;
-    },
   },
   setup(props) {
-    const errorsByTaskId: ErrorsByTaskIdType = reactive(
-      getErrorsByTaskId(props.note.tasks)
-    );
-    const titleError = ref(false);
-
     const { note } = toRefs(props);
+
     const reactiveInstance = reactive({
       noteStore: new NoteStore({ ...note.value }),
     });
@@ -185,10 +152,8 @@ export default defineComponent({
     });
 
     return {
-      NoteStorage: reactiveInstance.noteStore,
+      noteStore: reactiveInstance.noteStore,
       changedNote,
-      titleError,
-      errorsByTaskId,
     };
   },
 });

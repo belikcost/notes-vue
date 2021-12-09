@@ -16,7 +16,7 @@ import {
   RemoveNoteInterface,
 } from "@/types";
 import ChangeNote from "@/components/ChangeNote/index.vue";
-import { validateNoteTitle, validateTask } from "@/utils";
+import NoteValidator from "@/domain/NoteValidator";
 
 export default defineComponent({
   name: "Note",
@@ -56,26 +56,14 @@ export default defineComponent({
     onExit() {
       const note = this.note as NoteItemInterface;
 
-      if (!this.validateNote(note)) {
+      const NoteValidatorInstance = new NoteValidator(note);
+      const noteValid = NoteValidatorInstance.getValid();
+
+      if (!noteValid) {
         this.onRemoveNote(note.id);
       }
 
       this.$router.push("/");
-    },
-    validateNote(note: NoteItemInterface) {
-      let valid = true;
-
-      if (!validateNoteTitle(note.title)) {
-        valid = false;
-      }
-
-      note.tasks.forEach((task) => {
-        if (!validateTask(task)) {
-          valid = false;
-        }
-      });
-
-      return valid;
     },
   },
 });

@@ -8,13 +8,17 @@ interface ModalInterface {
   confirmCallback: null | CallbackType;
 }
 
-type ErrorsByTaskIdType = Record<TaskItemInterface["id"], boolean>;
+interface ErrorsInterface {
+  title: boolean;
+  tasks: Record<TaskItemInterface["id"], boolean>;
+}
 
 interface ChangeNoteStateInterface {
   initialNote: Readonly<NoteItemInterface>;
   backupChangedNote: null | NoteItemInterface;
   unDoChanges: HelpToolInterface;
   returnChanges: HelpToolInterface;
+  errors: ErrorsInterface;
 }
 
 interface HelpToolInterface {
@@ -22,4 +26,9 @@ interface HelpToolInterface {
   onUse: () => void;
 }
 
-export type { ChangeNoteStateInterface, HelpToolInterface, ErrorsByTaskIdType, ModalInterface };
+export type {
+  ErrorsInterface,
+  ChangeNoteStateInterface,
+  HelpToolInterface,
+  ModalInterface,
+};
