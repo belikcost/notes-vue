@@ -10,6 +10,7 @@ interface NotesStoreInterface {
   changeNote: ChangeNoteInterface;
   removeNote: RemoveNoteInterface;
   getNotes: () => NoteItemInterface[];
+  saveNotesToStorage: (storage: Storage) => void;
 }
 
 const INITIAL_NOTE = {
@@ -50,5 +51,9 @@ export default class NotesStore implements NotesStoreInterface {
 
   removeNote(noteId: NoteItemInterface["id"]): void {
     this._notes = this._notes.filter((note) => note.id !== noteId);
+  }
+
+  saveNotesToStorage(storage: Storage): void {
+    storage.setItem("notes", JSON.stringify(this._notes));
   }
 }

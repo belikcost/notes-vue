@@ -26,7 +26,7 @@ export default defineComponent({
 
     watch(
       () => [...notes.value],
-      (notes) => localStorage.setItem("notes", JSON.stringify(notes))
+      () => AppNotesStoreInstance.saveNotesToStorage(localStorage)
     );
 
     return { NotesStore: AppNotesStoreInstance, notes };

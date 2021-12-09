@@ -31,7 +31,6 @@
 import { defineComponent, PropType } from "vue";
 import { EventType, TaskItemInterface } from "@/types";
 import TextLabel from "@/primitives/TextLabel/index.vue";
-import Button from "@/primitives/Button/index.vue";
 
 export default defineComponent({
   name: "TaskItem",
