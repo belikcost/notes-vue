@@ -6,11 +6,12 @@ import {
 
 interface NotesStoreInterface {
   _notes: NoteItemInterface[];
+  _storage: Storage;
   createNote: (noteId: NoteItemInterface["id"]) => void;
   changeNote: ChangeNoteInterface;
   removeNote: RemoveNoteInterface;
   getNotes: () => NoteItemInterface[];
-  saveNotesToStorage: (storage: Storage) => void;
+  saveNotesToStorage: () => void;
 }
 
 const INITIAL_NOTE = {
@@ -20,10 +21,13 @@ const INITIAL_NOTE = {
 
 export default class NotesStore implements NotesStoreInterface {
   _notes: NoteItemInterface[];
+  _storage: Storage;
 
   constructor(initialNotes: NoteItemInterface[], storage: Storage) {
+    this._storage = storage;
+
     try {
-      const notesFromStorage = storage.getItem("notes");
+      const notesFromStorage = this._storage.getItem("notes");
 
       if (notesFromStorage) {
         this._notes = JSON.parse(notesFromStorage);
@@ -53,7 +57,7 @@ export default class NotesStore implements NotesStoreInterface {
     this._notes = this._notes.filter((note) => note.id !== noteId);
   }
 
-  saveNotesToStorage(storage: Storage): void {
-    storage.setItem("notes", JSON.stringify(this._notes));
+  saveNotesToStorage(): void {
+    this._storage.setItem("notes", JSON.stringify(this._notes));
   }
 }
