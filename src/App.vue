@@ -26,7 +26,7 @@ export default defineComponent({
 
     watch(
       () => [...notes.value],
-      () => AppNotesStoreInstance.saveNotesToStorage(localStorage)
+      () => AppNotesStoreInstance.saveNotesToStorage()
     );
 
     return { NotesStore: AppNotesStoreInstance, notes };

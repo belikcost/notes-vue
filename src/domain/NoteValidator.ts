@@ -37,21 +37,12 @@ export default class NoteValidator implements NoteValidatorInterface {
   }
 
   getValid(): boolean {
-    let valid = true;
+    if (this._errors.title) return false;
 
-    if (this._errors.title) {
-      valid = false;
-    }
+    const checkSomeTaskError = Object.values(this._errors.tasks).some(
+      (taskError) => taskError
+    );
 
-    for (const task in this._errors.tasks) {
-      const taskError = this._errors.tasks[task];
-
-      if (taskError) {
-        valid = false;
-        break;
-      }
-    }
-
-    return valid;
+    return !checkSomeTaskError;
   }
 }
