@@ -36,8 +36,8 @@ export default defineComponent({
     },
   },
   methods: {
-    onKeyPress(ev: KeyboardEvent) {
-      if (ev.key === "Enter" && this.$route.path === "/") {
+    onKeyPress(e: KeyboardEvent) {
+      if (e.key === "Enter") {
         this.onCreateNote();
       }
     },

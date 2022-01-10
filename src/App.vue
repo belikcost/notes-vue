@@ -16,33 +16,33 @@ import NotesStore from "@/domain/NotesStore";
 export default defineComponent({
   name: "App",
   setup() {
-    const AppNotesStoreInstance = reactive(
+    const appNotesStoreInstance = reactive(
       new NotesStore(INITIAL_NOTES, localStorage)
     );
 
     const notes = computed(() => {
-      return AppNotesStoreInstance.getNotes();
+      return appNotesStoreInstance.getNotes();
     });
 
     watch(
       () => [...notes.value],
-      () => AppNotesStoreInstance.saveNotesToStorage()
+      () => appNotesStoreInstance.saveNotesToStorage()
     );
 
-    return { NotesStore: AppNotesStoreInstance, notes };
+    return { notesStore: appNotesStoreInstance, notes };
   },
   methods: {
     onCreateNote() {
       const id = Math.floor(Math.random() * 100);
 
-      this.NotesStore.createNote(id);
+      this.notesStore.createNote(id);
       this.$router.push(`/${id}`);
     },
     onRemoveNote(noteId: NoteItemInterface["id"]) {
-      this.NotesStore.removeNote(noteId);
+      this.notesStore.removeNote(noteId);
     },
     onChangeNote(changedNote: NoteItemInterface) {
-      this.NotesStore.changeNote(changedNote);
+      this.notesStore.changeNote(changedNote);
     },
   },
 });
