@@ -1,17 +1,52 @@
 <template>
-  <div class="home">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div>
+    <NotesList :notes="notes" :onRemoveNote="onRemoveNote" />
+    <Button @click="onCreateNote">Create note</Button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue";
+import { defineComponent, PropType } from "vue";
+import NotesList from "@/components/NotesList/index.vue";
+import {
+  NoteItemInterface,
+  CreateNoteInterface,
+  RemoveNoteInterface,
+} from "@/types";
+import Button from "@/primitives/Button/index.vue";
 
 export default defineComponent({
   name: "Home",
   components: {
-    HelloWorld,
+    NotesList,
+    Button,
+  },
+  props: {
+    notes: {
+      type: Array as PropType<NoteItemInterface[]>,
+      required: true,
+    },
+    onRemoveNote: {
+      type: Function as PropType<RemoveNoteInterface>,
+      required: true,
+    },
+    onCreateNote: {
+      type: Function as PropType<CreateNoteInterface>,
+      required: true,
+    },
+  },
+  methods: {
+    onKeyPress(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        this.onCreateNote();
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("keypress", this.onKeyPress);
+  },
+  unmounted() {
+    document.removeEventListener("keypress", this.onKeyPress);
   },
 });
 </script>

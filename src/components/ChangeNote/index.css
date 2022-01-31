@@ -1,0 +1,32 @@
+.change-note_title {
+    text-align: center;
+}
+
+.change-note_margin-0 {
+    margin: 0;
+}
+
+.change-note__tasks {
+    margin-top: 50px;
+}
+
+.change-note__footer {
+    margin: 50px auto 0;
+}
+
+.change-note__button-group {
+    display: flex;
+    justify-content: space-around;
+}
+
+.change-note__help-tools {
+    margin: 10px 0;
+}
+
+.change-note_error {
+    color: crimson;
+
+    font-size: 14px;
+
+    margin: 15px 0;
+}

@@ -1,4 +1,4 @@
-# vue-project-2
+# Notepad
 
 ## Project setup
 ```
