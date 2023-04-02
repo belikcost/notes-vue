@@ -39,6 +39,6 @@ export default class NoteValidator implements NoteValidatorInterface {
   getValid(): boolean {
     if (this._errors.title) return false;
 
-    return Object.values(this._errors.tasks).some(Boolean);
+    return !Object.values(this._errors.tasks).some(Boolean);
   }
 }
